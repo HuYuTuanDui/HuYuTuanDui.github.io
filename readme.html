@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+ <title>Php+MySql通用简易教育收费系统</title>
+ <meta name="Keywords" content="Php+MySql通用简易教育收费系统" />
+<meta name="author" content="yujianyue, admin@ewuyi.net">
+<meta name="copyright" content="www.12391.net">
+<script type="text/javascript">
+function $(Obj){
+return document.getElementById(Obj);
+}
+function Trim(Str){
+return  Str.replace(/(^\s*)|(\s*$)/g,"");
+}
+function menuFix(){
+  var sfEls=$("menu").getElementsByTagName("li");
+  for (var index=0;index<sfEls.length;index++){
+  sfEls[index].onmouseover=function(){
+  this.className+=(this.className.length > 0 ? " " : "") + "sfhover";
+  }
+  sfEls[index].onmouseout=function(){
+  this.className=this.className.replace(new RegExp("( ?|^)sfhover\\b"),"");
+  }
+  }
+}
+function Pid(id,tag){
+ if(!tag){
+ return $(id);
+ } else{
+ return $(id).getElementsByTagName(tag);
+ }
+}
+function tab_zzjs(id,hx,box,iClass,s,pr){
+ var hxs=Pid(id,hx);
+ var boxs=Pid(id,box);
+ if(!iClass){ // 如果不指定class，则：
+ boxsClass=boxs; // 直接使用box作为容器
+ }else{
+ var boxsClass = [];
+ for(i=0;i<boxs.length;i++){
+ if(boxs[i].className.match(/\btab\b/)){// 判断容器的class匹配
+ boxsClass.push(boxs[i]);
+ }
+ }
+ }
+ if(!pr){ // 如果不指定预展开容器，则：
+ go_to(0); // 默认展开序列
+ yy();
+ } else {
+ go_to(pr);
+ yy();
+ }
+ function yy(){
+ for(var i=0;i<hxs.length;i++){
+ hxs[i].temp=i;
+ if(!s){// 如果不指定事件，则：
+ s="onclick"; // onmouseover
+ hxs[i][s]=function(){
+ go_to(this.temp);
+ }
+ } else{
+ hxs[i][s]=function(){
+ go_to(this.temp);
+ }
+ }
+ }
+ }
+ function go_to(pr){
+ for(var i=0;i<hxs.length;i++){
+ if(!hxs[i].tmpClass){
+ hxs[i].tmpClass=hxs[i].className+=" ";
+ boxsClass[i].tmpClass=boxsClass[i].className+=" ";
+ }
+ if(pr==i){
+ hxs[i].className+=" up"; // 展开状态：标题
+ boxsClass[i].className+=" up"; // 展开状态：容器
+ } else {
+ hxs[i].className=hxs[i].tmpClass;
+ boxsClass[i].className=boxsClass[i].tmpClass;
+ }
+ }
+ }
+}
+</script>
+<style type="text/css">
+/*自定义css*/
+
+*{margin:0;padding:0;line-height:150%;}
+body{font-family:"microsoft yahei",SimHei;background:#fff;font-size:14px;}
+body{background:#fff;}
+a{text-decoration:none;}
+a:link{color:blue;}
+a:visited{color:blue;}
+a:hover,a:active{color:blue;}
+b{color:red;font-weight:normal;}
+.r{text-align:right;}
+.l{text-align:left;}
+.c{text-align:center;}
+span{color:gray;}
+.gray{color:gray;}
+strong{color:red;}
+p{padding:5px;line-height:150%;}
+p a:hover{padding:3px;color:green;}
+
+.mabida {position:relative; }
+.mabida .aiyaha { position: absolute; left: 0px; top: 20px; z-index:999;background-color:white; border:1px #006AA8 solid; display: none;}
+.mabida .aiyaha img { width:138px; margin:12px; }
+.mabida:hover .aiyaha { display: block;}
+strong,b{color:red;margin:2px;line-height:130%;}
+
+h4{font-size:16px;line-height:150%;font-weight:600;margin:1px 2px;color:green;}
+h5{font-size:14px;line-height:120%;font-weight:300;margin:1px 2px;color:blue;}
+
+
+#tabs1 {margin:0px auto;position:relative;width:99%;min-width:988px;min-height:428px;padding:15px 0 0 0;overflow:hidden; }
+#tabs1 h3 { position:relative; z-index:2; float:left; line-height:36px; padding:0 6px 0 7px; margin-left:2px; text-align:center; background:#fff; color:blue; cursor:pointer; }
+#tabs1 h3.up { line-height:40px; padding:5px 7px 0 7px; margin:-6px 0 0 0; border:solid #ccc; border-width:1px 1px 0 1px; color:#c00; }
+#tabs1 div { display:none; position:absolute; left:0; top:54px; z-index:1; width:98.5%; height:368px; padding:5px; border:solid 1px #ccc; color:#666; }
+#tabs1 div.up { display:block; overflow-y:scroll; background-color:white; }
+#tabs1 div p { line-height:150%;color:blue; }
+
+#tab02{position:relative;margin:0px;border:0px solid #ccc;} 
+#tab02 h4 {line-height:150%;padding:5px 2px;font-size:16px;text-align:left;color:blue;} 
+#tab02 h4 {cursor:pointer;border:solid #ccc;border-width:1px 0 0 0;} 
+#tab02 h4.up {color:red;background:#f6f6f6;line-height:180%;padding:5px 2px;border-width:2px 0 0 0;font-weight:600;} 
+#tab02 ol {display:none;border:0px solid #ccc;} 
+#tab02 ol.up { display:block;padding:3px 0px; min-height:54px;} 
+caption{padding:5px;margin:8px auto;margin-left:18px;}
+table{border-top:2px solid #0180CF; margin:0 auto;font-size:12px;width:99%;}
+table td{min-width:66px;border-bottom:1px solid #a2c6d3;padding:5px 0px;word-wrap:break-word;word-break:break-all;}
+table tr:nth-child(even){background: #FCFCFC;}
+.tt{background:#e5f2fa;line-height:18px;FONT-SIZE:12px;font-weight:600;}
+.red{background:red;color:white;}
+#header,#main,#footer{margin:0px auto;width:99%;min-width:988px;max-width:1188px;display:block;}
+#header{background:#fff;height:38px;line-height:38px;border-bottom:2px solid #ccc;z-index:3;}
+#header .logo{font-style:italic;padding:0 0 0 8px;font-size:12px;font-weight:300;color:green;}
+#header .logo b{height:38px;line-height:38px;font-weight:900;font-size:20px;color:#0180CF;}
+#menu{float:right;height:36px;line-height:36px;margin:0 auto;padding:0 8px 0 0;}
+#menu ul{list-style:none;margin:0;padding:0;}
+#menu ul li{float:left;margin-left:2px;}
+#menu ul li a{display:block;border:1px solid white;padding:0 3px;min-width:88px;height:36px;line-height:36px;text-align:center;}
+#menu ul li a:hover{border:1px solid #ccc;background:#0180CF;color:white;}
+#menu ul li ul{background:white;z-index:5;display:none;top:37px;border:1px solid #ccc;position:absolute;}
+#menu ul li ul li{float:none;background:#eee;margin:0;}
+#menu ul li ul li a{background:white;border-bottom:1px solid #ccc;}
+#menu ul li ul li a:hover{background:#0180CF;color:white;border-bottom:1px solid #ccc;}
+#menu ul li:hover ul{display:block;}
+#onebyone{margin:0px auto;width:99%;min-width:988px;max-width:1188px;display:block;}
+fieldset{margin:5px auto;border:0;border-top:1px solid #ccc;list-style-type:none;table-layout:fixed;white-space: normal;word-break:break-all; }
+.w{width:100%;padding:0; }
+legend{margin:0px 18px;padding:0px;text-align:center;font-size:20px;color:green;font-weight:600;text-overflow:ellipsis;white-space:nowrap;}
+fieldset {word-wrap:break-word;}
+.none {border:1px solid green;text-align:center;}
+#footer{text-align:center;margin-top:0px;padding-top:5px;border-top:1px solid #ccc;}
+</style>
+</head>
+<body>
+<div id="main">
+ <div id="header">
+ <div class="nav">
+<div id="menu">
+ <ul>
+ <li><a href="http://juan.12391.net/juanpay.php" class="btn">赞助我们</a></li>
+ <li><a href="#">查询源码</a>
+ <ul>
+
+<a href="http://asp.96448.cn" target="_blank" class="btn">asp源码版无后台</a>
+<a href="http://aspcha.96448.cn" target="_blank" class="btn">asp源码版有后台</a>
+<a href="http://php.96448.cn" target="_blank" class="btn">PHP源码版无后台</a>
+<a href="http://phpa.96448.cn" target="_blank" class="btn">PHP源码版有后台</a>
+
+ </ul>
+ </li> 
+
+ <li><a href="#">搜索源码</a>
+ <ul>
+
+<a href="http://soso.96448.cn" target="_blank" class="btn">asp源码版无后台</a>
+<a href="http://soso.96448.cn" target="_blank" class="btn">asp源码版有后台</a>
+<a href="http://phps.96448.cn" target="_blank" class="btn">PHP源码版无后台</a>
+<a href="http://phpso.96448.cn" target="_blank" class="btn">PHP源码版加强版</a>
+
+ </ul>
+ </li> 
+
+
+<li><a href="#">付费查询</a>
+ <ul>
+<a href="https://item.taobao.com/item.htm?id=545535124887" target="_blank" class="btn">登录查询源码版</a>
+<a href="https://item.taobao.com/item.htm?id=528187132312" target="_blank" class="btn">公众号绑定查询版</a>
+<a href="http://add.17386.net" target="_blank" class="btn">随机抽奖分配</a>
+<a href="https://item.taobao.com/item.htm?id=543880972347" target="_blank" class="btn">发货查询加强版</a>
+ </ul>
+ </li> 
+
+
+ <li><a href="#">免费平台</a>
+ <ul>
+ <li><a href="http://www.12391.net" target='_blank'>万用查分</a></li>
+ <li><a href="http://www.chafenba.com" target='_blank'>查分吧</a></li>
+ <li><a href="http://www.yichaxin.com" target='_blank'>易查薪</a></li>
+ </ul>
+ </li> 
+
+ </ul>
+</div>
+<div class="logo"><b>使用说明书</b>12391.net</div>
+</div>
+<script type="text/javascript">
+window.onload = menuFix;
+</script>
+</div><div id='onebyone'>
+<!-- table!sta -->
+<div id="md">
+<fieldset class="w">
+<legend>Php+MySql通用简易教育收费系统</b></legend>
+
+适用预设金额的学校学费收费，物业小区水电费收费等场景。用户查询自己的金额信息后扫码支付。
+管理员在后台导入用户及金额信息，可查看用户支付列表(可搜、可删改、有分页)。
+并有简单统计功能(已付未付单数及金额)，支持导出。
+
+<div id="tabs1">
+
+<h3  class="jj">使用环境</h3><div class="jj">
+php(5.4-7.2)+mysql(5.6+),推荐宝塔护卫神等集成环境<br>
+
+<h4>软硬件要求</h4>
+网站空间、网站域名。国内空间你还需要工信部/公安部网站备案(都可能耗时半月)。<br>
+需要用到支付接口：年付300认证公众号并开通扫码付(当面付)，无域名要求。<br>
+
+<h4>工作能力</h4>
+需要管理员（使用者）具备FTP、域名绑定、网站空间使用、基本excel操作等技能。<br>
+有公众号、支付接口、数据库备份还原迁移等工作经历。<br>
+
+</div><h3 class="pr">首次使用</h3><div>
+
+notepad++打开inc/sqls.Php找到22-27行左右修改数据库信息。<br>
+上传源码到网站空间，访问http://网址/目录/install/执行写库<br>
+用户查询页面：http://网址/目录/<br>
+管理登录页面：http://网址/目录/user/
+<br>
+</div><h3 class="pr">安全建议</h3><div>
+推荐修改后台目录user为只有自己知道的内容，访问的网址对应变化。<br>
+安装完成并已正常使用，请删除文件../install/index.php。更多提示见本页源文件。<br>
+
+</div><h3 class="pr">友情提醒</h3><div>
+这是支付接口，依赖公众号每年认证；可能会有0.6%费率（教育类可能可申请免费接口）<br>
+商户类目对应资质、费率、结算周期：https://kf.qq.com/faq/140225MveaUz1501077rEfqI.html<br>
+商户类目对应资质、费率、结算周期：https://kf.qq.com/faq/140225MveaUz1501077rEfqI.html<br>
+开发已很久，但暂未在实际场景中使用，请先内部测试，可用再上线。<br>
+涉及金钱，建议由懂财务及较高回去新知能力的人操作，比如提及扫码付(Native支付)就能明白怎么回事。<br>
+功能免费使用，我们也不承担任何责任。
+
+</div><h3 class="pr">问题反馈</h3><div><h4>功能异常反馈</h4>电话反馈：15058593138（同微信号）<br>沟通请提供版本信息： sql2pay 及 现象截图。<br>语音沟通高效快捷，可以为双方节省很多时间。<br><h4>付费技术支持</h4>如需付费技术支持请移步：<a target=_blank href='https://aiyaha.taobao.com' >https://aiyaha.taobao.com</a><br>或加微信 15058593138 可能一个指点为你节省几个小时调试时间。<br><h4><b>更多付费解决方案 今后可能用到</b></h4><h4>微信公众号用聊天回复式通用成绩查询系统源码工资水电费通用</h4>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=520496908275' >https://item.taobao.com/item.htm?id=520496908275</a><br><h4>php无后台通用查询系统</h4>演示导航页：<a target=_blank href='http://php.96448.cn/' >http://php.96448.cn/</a> （45选1）<br>有各版本对应的演示、文字教程、视频教程以及对应的参数等供你提前预览。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=45808268273' >https://item.taobao.com/item.htm?id=45808268273</a><br><h4>asp账号密码登录查询本人工资成绩系统</h4>管理员网址：<a target=_blank href='http://usercha.96448.cn/adman/admin.asp' >http://usercha.96448.cn/adman/admin.asp</a> (演示自动登录)<br>注意：源码版演示是公开的，尽量别传真实数据，原来数据尽量保留。<br>用户查询网址：<a target=_blank href='http://usercha.96448.cn/user' >http://usercha.96448.cn/user</a> (账号密码见管理员后台）<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=545535124887' >https://item.taobao.com/item.htm?id=545535124887</a><br><h4>PHP账号密码登录查询本人工资成绩系统</h4>管理员网址：<a target=_blank href='http://sqluser.12391.net/user/admin.php' >http://sqluser.12391.net/user/admin.php</a> (演示自动登录)<br>用户查询网址：<a target=_blank href='http://sqluser.12391.net/' >http://sqluser.12391.net/</a> (用户登录账号见后台，可新增)<br>注意：源码版演示是公开的，尽量别传真实数据，原来数据尽量保留。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=43193387085' >https://item.taobao.com/item.htm?id=43193387085</a><br><h4>原创微信公众号接口版一对一绑定查询成绩工资物业水电费查询系统</h4>后台网址：<a target=_blank href='http://weicha.96448.cn/adman/admin.asp' >http://weicha.96448.cn/adman/admin.asp</a> （自动登录）<br>测试接口：<a target=_blank href='http://weicha.96448.cn/chengji.asp' >http://weicha.96448.cn/chengji.asp</a> (仅供测试)<br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=528187132312' >https://item.taobao.com/item.htm?id=528187132312</a><br><h4>php+mysql通用快递发货查询系统网页版公众号自动查询回复</h4>查询页面：<a target=_blank href='http://sql2cha.pucha.net/' >http://sql2cha.pucha.net/</a> 输入内容自己登录后台添加<br>管理后台：<a target=_blank href='http://sql2cha.pucha.net/user/admin.php' >http://sql2cha.pucha.net/user/admin.php</a><br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=543880972347' >https://item.taobao.com/item.htm?id=543880972347</a><br><h4>php+mysql农产品质量溯源系统二维码防伪查询通用简易版</h4>查询页面：<a target=_blank href='http://sql3cha.pucha.net/' >http://sql3cha.pucha.net/</a><br>管理后台：<a target=_blank href='http://sql3cha.pucha.net/user/admin.php' >http://sql3cha.pucha.net/user/admin.php</a><br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=43525422046' >https://item.taobao.com/item.htm?id=43525422046</a><br><h4>php+mysql通用查询系统源码成绩分数水电费录取分班分宿舍</h4>查询页面：<a target=_blank href='http://sql1cha.pucha.net/' >http://sql1cha.pucha.net/</a> 输入内容请自行在后台添加<br>管理后台：<a target=_blank href='http://sql1cha.pucha.net/user/admin.php' >http://sql1cha.pucha.net/user/admin.php</a><br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=585333857970' >https://item.taobao.com/item.htm?id=585333857970</a><br><h4>原创php联动选择查询系统二三四级联动筛选网点查询汽车品牌查询</h4>访问以下网址后选择对应版本查看（3选1）。<br>二级联动：<a target=_blank href='http://xuan.96448.cn/SAI2X' >http://xuan.96448.cn/SAI2X</a><br>三级联动：<a target=_blank href='http://xuan.96448.cn/SAI3X' >http://xuan.96448.cn/SAI3X</a><br>四级联动：<a target=_blank href='http://xuan.96448.cn/SAI4X' >http://xuan.96448.cn/SAI4X</a><br>演示样表：<a target=_blank href='http://xuan.96448.cn/demo.zip' >http://xuan.96448.cn/demo.zip</a> 供下载和查询结果对比。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=597340413173' >https://item.taobao.com/item.htm?id=597340413173</a><br><h4>php后台版通用查询系统</h4>演示导航页：<a target=_blank href='http://phpa.96448.cn/' >http://phpa.96448.cn/</a> （6选1）<br>有各版本对应的演示、文字教程、视频教程以及对应的参数等供你提前预览。<br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=43263796985' >https://item.taobao.com/item.htm?id=43263796985</a><br><h4>php模糊查询查询网站源码</h4>演示导航：<a target=_blank href='http://phpso.96448.cn/' >http://phpso.96448.cn/</a> （36选1） <br> 有各版本对应的演示、文字教程、视频教程以及对应的参数等供你提前预览。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=562725628819' >https://item.taobao.com/item.htm?id=562725628819</a><br><h4>asp通用查询成绩查询系统无后台版</h4>演示导航页：<a target=_blank href='http://asp.96448.cn/' >http://asp.96448.cn/</a> （12选1）<br>在线演示说明：根据：网页版本、查询条件个数、数据库类型选择对应网址体验。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=45703415332' >https://item.taobao.com/item.htm?id=45703415332</a><br><h4>asp通用查询成绩查询系统后台版</h4>演示导航页：<a target=_blank href='http://aspa.96448.cn/' >http://aspa.96448.cn/</a> （16选1）<br>在线演示说明：根据网页版本、查询条件个数选择对应网址体验。<br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=528692002051' >https://item.taobao.com/item.htm?id=528692002051</a><br><h4>ASP+Txt多选1 网页版通用搜索查询系统</h4>演示导航页：<a target=_blank href='http://soso.96448.cn/' >http://soso.96448.cn/</a><br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=520167788658' >https://item.taobao.com/item.htm?id=520167788658</a><br><h4>某信公众号用聊天式自助领码系统（asp+access）</h4>后台地址：<a target=_blank href='http://lima.96448.cn/adman/admin.asp' >http://lima.96448.cn/adman/admin.asp</a> (演示自动登录)<br>付费链接：<a target=_blank href='https://item.taobao.com/item.htm?id=525228396981' >https://item.taobao.com/item.htm?id=525228396981</a><br>注意：这是公共测试网址，请勿上传私密数据(其他人也可以看到的哦)。<br></div><h3 class="pr">更多免费</h3><div>相继免费公布了asp+txt,asp+excel,asp+access三大系列asp免费查询。<br>相继免费公布了php+txt,php+xls,php+csv,php+sqlite,php+access,php+mysql六大系列免费查询。<br><h4>详情百度:</h4>asp+access通用考试查分系统  |  php+mysql网页版通用考试成绩查询系统  |  asp+excel多用途查询系统  |  asp+excel图书在线检索系统  |  <br>asp+excel图书在线检索系统手机版  |  asp+txt 通用查询系统手机版  |  asp+txt 通用工资查询系统  |  asp+txt 维修点快递进度查询系统  |  <br>asp+txt通用成绩查询系统  |  asp通用日历式值班查询系统  |  PHP+Csv(Excel)通用成绩查询系统  |  PHP+Csv(Excel)通用成绩查询系统手机版  |  <br>PHP+excel多用途查询系统  |  PHP+excel通用成绩查询系统  |  PHP+excel通用成绩查询系统  |  php+excel通用课表查询系统  |  <br>php+Txt 成绩查询系统通用版  |  php+Txt多用途查询系统  |  asp身份证批量查询与解读系统  |  asp网站速度批量查询系统  |  <br>php+access 通用考试查分系统  |  php+sqlite 通用成绩查询系统  |  7384手机号码归属地查询系统  |  身份证号码查询与验证系统  |  <br>山寨广告招贴网 V3.6  |  7384城市公交网查询系统源码  |  7384学生成绩查询系统  |  7384迷你广告信息发布系统  |  <br>7384微招聘系统  |  Excel二维表数据转SELECT CASE 工具  |  Excel二维表转文本工具  |  7384手机号码归属地查询系统  |  <br>公众号用聊天式万用查询系统  |  php域名解析信息查询网页版小工具  |  PHP微信公众号接口开发在线调试工具  |  等50+免费源码<br>asp Db browser For access （asp access browser）asp版access数据库浏览器<br>php Db browser For sqlite （php sqlite browser）php版sqlite数据库浏览器<br>单数据文件双条件下拉选择查询系统(二级联动筛选查询系统)<br>asp+access公众号用通用领码发码随机抽奖系统<br> asp微信公众号自动回复开发案列之新闻查询机器人<br>.....<br></div>
+
+</div>
+
+<script type="text/javascript"> 
+<!-- 
+tab_zzjs("tabs1","h3","div","","onclick",0);
+//--> 
+</script> 
+</fieldset></div>
+<!-- table!old -->
+</div>
+<div id='footer'> Copyright&#169; 查分吧(chafenba.com) 版权所有 </div>
+</body>
+</html>
